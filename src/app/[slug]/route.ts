@@ -201,7 +201,7 @@ async function trackClickMetadata(data: {
         try {
             const geoApi = process.env.IPAPI_KEY
                 ? `http://api.ipapi.com/api/${data.ip}?access_key=${process.env.IPAPI_KEY}&security=1`
-                : `http://ip-api.com/json/${data.ip}`;
+                : `https://ipwho.is/${data.ip}`;
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 2000);
@@ -220,12 +220,13 @@ async function trackClickMetadata(data: {
                     isVpn = geoData.security?.is_vpn || geoData.security?.is_proxy || false;
                     isp = geoData.connection?.isp || "Unknown";
                 } else {
-                    // ip-api.com structure (fallback)
-                    if (geoData.status === "success") {
+                    // ipwho.is structure (fallback)
+                    if (geoData.success === true) {
                         country = geoData.country || "Unknown";
                         city = geoData.city || "Unknown";
-                        region = geoData.regionName || "Unknown";
-                        isp = geoData.isp || geoData.org || "Unknown";
+                        region = geoData.region || "Unknown";
+                        isp = geoData.connection?.isp || geoData.connection?.org || "Unknown";
+                        isVpn = geoData.security?.vpn || geoData.security?.proxy || geoData.security?.tor || false;
                     }
                 }
             }
