@@ -42,6 +42,13 @@ COPY --from=builder /app/prisma ./prisma
 EXPOSE 3000
 ENV PORT=3000
 
+# Install prisma to run database sync at startup
+RUN npm install -g prisma@6.19.2
+
+# Copy the startup script
+COPY entrypoint.sh ./
+RUN chmod +x entrypoint.sh
+
 # Server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["node", "server.js"]
+# The startup script pushes the Prisma schema and then starts the Next server
+CMD ["./entrypoint.sh"]
