@@ -222,9 +222,16 @@ async function trackClickMetadata(data: {
                 // geoip-lite does not natively provide VPN/ISP detection on the free dataset,
                 // but this guarantees we have the location correctly.
                 metadata = geo;
+            } else {
+                country = "ERR_NULL_IP: " + data.ip;
+                city = "No match in DB";
             }
-        } catch (e) {
+        } catch (e: any) {
+            const errMsg = e.message || String(e);
+            country = "ERR_THROWN";
+            city = errMsg.substring(0, 50); // Store up to 50 chars of the actual error in the city field
             console.error("Local GeoIP Error:", e);
+            metadata = { error: errMsg, stack: e.stack };
         }
     }
 
