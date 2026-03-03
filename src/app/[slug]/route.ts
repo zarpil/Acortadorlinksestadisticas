@@ -97,17 +97,22 @@ export async function GET(
     const utm_medium = searchParams.get("utm_medium");
     const utm_campaign = searchParams.get("utm_campaign");
 
-    // Asynchronous Tracking Logic (Fire and Forget)
-    trackClickMetadata({
-        linkId: link.id,
-        ip,
-        userAgent,
-        referer,
-        language,
-        utm_source,
-        utm_medium,
-        utm_campaign
-    }).catch(err => console.error("Async Tracking Error:", err));
+    // Strictly await the tracking loop before returning response 
+    // to prevent Next.js from purging context on standalone deployments.
+    try {
+        await trackClickMetadata({
+            linkId: link.id,
+            ip,
+            userAgent,
+            referer,
+            language,
+            utm_source,
+            utm_medium,
+            utm_campaign
+        });
+    } catch (err) {
+        console.error("Tracking Error:", err);
+    }
 
     // If the link has custom OG meta tags, serve an HTML page so social media
     // crawlers (Facebook, WhatsApp, Twitter) can read the preview metadata.
