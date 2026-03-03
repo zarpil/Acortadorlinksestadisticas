@@ -39,8 +39,8 @@ COPY --from=builder /app/.next/static ./.next/static
 # Copy Prisma schema and migrations to apply them during startup if needed
 COPY --from=builder /app/prisma ./prisma
 
-# Copy the geoip-lite database manually because Next.js standalone dynamic tracing ignores it
-COPY --from=deps /app/node_modules/geoip-lite/data ./.next/standalone/node_modules/geoip-lite/data
+# Copy the geoip-lite module manually because Next.js standalone dynamic tracing ignores it
+COPY --from=deps /app/node_modules/geoip-lite ./node_modules/geoip-lite
 
 EXPOSE 3000
 ENV PORT=3000
