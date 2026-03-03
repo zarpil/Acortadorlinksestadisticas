@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kutt. SaaS - Modern Link Shortener
 
-## Getting Started
+A high-performance, open-source link management and shortening platform built with modern web technologies. Designed for speed, security, and a premium user experience.
 
-First, run the development server:
+![Dashboard Preview](https://via.placeholder.com/1200x600?text=Kutt.+SaaS+Dashboard)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Key Features
+
+- **Blazing Fast Redirects**: High-performance URL resolution.
+- **Advanced Analytics**: Track clicks, geographic location (Country/City), device types, OS, and referrers.
+- **Custom Slugs & Expiration**: Create memorable custom links and set individual TTL (Time-To-Live) expirations.
+- **UTM Tracking**: Built-in support for marketing campaigns.
+- **Premium UI/UX**: Glassmorphism design, smooth animations, and automatic light/dark mode support.
+- **Role-Based Access**: Multi-tier architecture (Free, Pro, Enterprise) with an integrated Admin Panel.
+
+## 🛠️ Technology Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Server Actions)
+- **Database ORM**: [Prisma](https://www.prisma.io/)
+- **Authentication**: [NextAuth.js v5](https://next-auth.js.org/) (Auth.js)
+- **UI & Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/)
+- **Charts**: [Recharts](https://recharts.org/)
+
+## 🏗️ Getting Started
+
+### Prerequisites
+
+- Node.js (v18+)
+- PostgreSQL Database
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/zarpil/Acortadorlinksestadisticas.git
+   cd Acortadorlinksestadisticas
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables:**
+   Copy the example environment file and update the variables:
+   ```bash
+   cp .env.example .env
+   ```
+   *Make sure to set your `DATABASE_URL` and generate a `NEXTAUTH_SECRET`.*
+
+4. **Initialize the Database:**
+   Apply migrations to your PostgreSQL database:
+   ```bash
+   npx prisma migrate dev
+   npx prisma generate
+   ```
+
+5. **Run the Development Server:**
+   ```bash
+   npm run dev
+   ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔒 Security Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **IDOR Prevention**: Server Actions meticulously verify session ownership before data mutation.
+- **CSRF Protection**: Handled natively by Next.js Server Actions.
+- **SQL Injection Prevention**: Parameterized queries enforced via Prisma ORM.
 
-## Learn More
+## 🚀 Deployment
 
-To learn more about Next.js, take a look at the following resources:
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+When deploying, ensure you configure the following Environment Variables in your Vercel project settings:
+- `DATABASE_URL`
+- `NEXTAUTH_SECRET`
+- `NEXTAUTH_URL`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📄 License
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open-source and available under the [MIT License](LICENSE).
