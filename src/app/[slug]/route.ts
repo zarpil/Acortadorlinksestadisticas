@@ -199,39 +199,27 @@ async function trackClickMetadata(data: {
 
     if (!isLocal) {
         try {
-            const geoApi = process.env.IPAPI_KEY
-                ? `http://api.ipapi.com/api/${data.ip}?access_key=${process.env.IPAPI_KEY}&security=1`
-                : `https://freeipapi.com/api/json/${data.ip}`;
+            const geoip = require('geoip-lite');
+            const geo = geoip.lookup(data.ip);
 
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 2000);
-            const resp = await fetch(geoApi, { signal: controller.signal });
-            clearTimeout(timeoutId);
-
-            if (resp.ok) {
-                const geoData = await resp.json();
-                metadata = geoData; // Store full JSON response for audits
-
-                if (process.env.IPAPI_KEY) {
-                    // ipapi.com structure
-                    country = geoData.country_name || "Unknown";
-                    city = geoData.city || "Unknown";
-                    region = geoData.region_name || "Unknown";
-                    isVpn = geoData.security?.is_vpn || geoData.security?.is_proxy || false;
-                    isp = geoData.connection?.isp || "Unknown";
-                } else {
-                    // freeipapi.com structure (fallback)
-                    if (geoData.countryName) {
-                        country = geoData.countryName || "Unknown";
-                        city = geoData.cityName || "Unknown";
-                        region = geoData.regionName || "Unknown";
-                        isp = "Unknown"; // freeipapi doesn't reliably provide ISP info
-                        isVpn = geoData.isProxy || false;
-                    }
+            if (geo) {
+                // Translate ISO Country Code (e.g. 'US') to full name (e.g. 'United States')
+                try {
+                    const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+                    country = regionNames.of(geo.country) || geo.country;
+                } catch (e) {
+                    country = geo.country; // Fallback to raw code if translation fails
                 }
+
+                city = geo.city || "Unknown";
+                region = geo.region || "Unknown";
+
+                // geoip-lite does not natively provide VPN/ISP detection on the free dataset,
+                // but this guarantees we have the location correctly.
+                metadata = geo;
             }
         } catch (e) {
-            console.error("Geo API Error:", e);
+            console.error("Local GeoIP Error:", e);
         }
     }
 
