@@ -82,7 +82,9 @@ export async function GET(
     }
 
     // Capture Request Metadata
-    const ipHeader = req.headers.get("x-forwarded-for") || "127.0.0.1";
+    const forwardedFor = req.headers.get("x-forwarded-for");
+    const realIp = req.headers.get("x-real-ip");
+    const ipHeader = forwardedFor || realIp || "127.0.0.1";
     const ip = ipHeader.split(",")[0].trim();
 
     const userAgent = req.headers.get("user-agent") || "";
@@ -189,13 +191,17 @@ async function trackClickMetadata(data: {
     let metadata: any = {};
 
     // Do not call Geo API for local IPs to avoid errors
-    const isLocal = data.ip === "127.0.0.1" || data.ip === "::1" || data.ip.startsWith("192.168.");
+    const isLocal = data.ip === "127.0.0.1" ||
+        data.ip === "::1" ||
+        data.ip.startsWith("192.168.") ||
+        data.ip.startsWith("10.") ||
+        data.ip.startsWith("172.");
 
     if (!isLocal) {
         try {
             const geoApi = process.env.IPAPI_KEY
                 ? `http://api.ipapi.com/api/${data.ip}?access_key=${process.env.IPAPI_KEY}&security=1`
-                : `https://ipapi.co/${data.ip}/json/`;
+                : `http://ip-api.com/json/${data.ip}`;
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 2000);
@@ -214,11 +220,13 @@ async function trackClickMetadata(data: {
                     isVpn = geoData.security?.is_vpn || geoData.security?.is_proxy || false;
                     isp = geoData.connection?.isp || "Unknown";
                 } else {
-                    // ipapi.co structure (fallback)
-                    country = geoData.country_name || "Unknown";
-                    city = geoData.city || "Unknown";
-                    region = geoData.region || "Unknown";
-                    isp = geoData.org || "Unknown";
+                    // ip-api.com structure (fallback)
+                    if (geoData.status === "success") {
+                        country = geoData.country || "Unknown";
+                        city = geoData.city || "Unknown";
+                        region = geoData.regionName || "Unknown";
+                        isp = geoData.isp || geoData.org || "Unknown";
+                    }
                 }
             }
         } catch (e) {
