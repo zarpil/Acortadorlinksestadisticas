@@ -1,82 +1,119 @@
-# Kutt. SaaS - Modern Link Shortener
+# 🔗 LinkShort — Acortador de Enlaces SaaS
 
-A high-performance, open-source link management and shortening platform built with modern web technologies. Designed for speed, security, and a premium user experience.
+Plataforma moderna de acortamiento de enlaces con analíticas avanzadas, gestión de campañas y panel de administración. Construido con **Next.js 16**, **Prisma**, **PostgreSQL** y desplegable con **Docker**.
 
-![Dashboard Preview](https://via.placeholder.com/1200x600?text=Kutt.+SaaS+Dashboard)
+---
 
-## 🚀 Key Features
+## ✨ Funcionalidades Principales
 
-- **Blazing Fast Redirects**: High-performance URL resolution.
-- **Advanced Analytics**: Track clicks, geographic location (Country/City), device types, OS, and referrers.
-- **Custom Slugs & Expiration**: Create memorable custom links and set individual TTL (Time-To-Live) expirations.
-- **UTM Tracking**: Built-in support for marketing campaigns.
-- **Premium UI/UX**: Glassmorphism design, smooth animations, and automatic light/dark mode support.
-- **Role-Based Access**: Multi-tier architecture (Free, Pro, Enterprise) with an integrated Admin Panel.
+| Funcionalidad | Descripción |
+|---|---|
+| 🔗 **Acortamiento de URLs** | Genera slugs aleatorios o personalizados (Enterprise) para cada enlace |
+| 📊 **Analíticas en tiempo real** | Geolocalización, dispositivos, navegadores, referrers y tráfico UTM por cada clic |
+| 📁 **Campañas** | Organiza tus enlaces en campañas con opciones de archivar y eliminar |
+| 🔒 **Autenticación completa** | Registro, login y gestión de sesiones con NextAuth.js v5 |
+| 👑 **Panel de Administración** | Gestión de usuarios, cambio de tiers y métricas globales del sistema |
+| 🏷️ **Sistema de Tiers** | FREE, PRO y ENTERPRISE con límites configurables de campañas y enlaces |
+| 📅 **Enlaces con caducidad** | Configura una fecha de expiración (TTL) para cada enlace |
+| 🌐 **Open Graph personalizable** | Edita título, descripción e imagen de vista previa para redes sociales |
+| 📱 **QR Code** | Genera códigos QR descargables para cada enlace acortado |
+| 📤 **Exportación CSV** | Descarga las analíticas de cualquier campaña en formato CSV |
+| 🌍 **Geolocalización Offline** | Base de datos GeoIP local (sin depender de APIs externas) |
+| 🎨 **Tema oscuro/claro** | Soporte completo de dark mode con `next-themes` |
 
-## 🛠️ Technology Stack
+---
 
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Server Actions)
-- **Database ORM**: [Prisma](https://www.prisma.io/)
-- **Authentication**: [NextAuth.js v5](https://next-auth.js.org/) (Auth.js)
-- **UI & Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/)
-- **Charts**: [Recharts](https://recharts.org/)
+## 🛠️ Stack Tecnológico
 
-## 🏗️ Getting Started
+- **Framework:** Next.js 16 (App Router, Server Actions, Turbopack)
+- **Base de Datos:** PostgreSQL con Prisma ORM
+- **Autenticación:** NextAuth.js v5 (JWT + Credentials)
+- **UI:** Tailwind CSS v4 + shadcn/ui + Recharts
+- **Geolocalización:** geoip-lite (offline, sin APIs externas)
+- **Despliegue:** Docker + Docker Compose (compatible con Coolify, Railway, etc.)
 
-### Prerequisites
+---
 
-- Node.js (v18+)
-- PostgreSQL Database
+## 🚀 Instalación Local
 
-### Installation
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/tu-usuario/link-shortener-saas.git
+cd link-shortener-saas
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/zarpil/Acortadorlinksestadisticas.git
-   cd Acortadorlinksestadisticas
-   ```
+# 2. Instalar dependencias
+npm install
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+# 3. Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tu DATABASE_URL, NEXTAUTH_SECRET, etc.
 
-3. **Configure Environment Variables:**
-   Copy the example environment file and update the variables:
-   ```bash
-   cp .env.example .env
-   ```
-   *Make sure to set your `DATABASE_URL` and generate a `NEXTAUTH_SECRET`.*
+# 4. Sincronizar la base de datos
+npx prisma db push
 
-4. **Initialize the Database:**
-   Apply migrations to your PostgreSQL database:
-   ```bash
-   npx prisma migrate dev
-   npx prisma generate
-   ```
+# 5. Arrancar en desarrollo
+npm run dev
+```
 
-5. **Run the Development Server:**
-   ```bash
-   npm run dev
-   ```
+La aplicación estará disponible en `http://localhost:3000`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-## 🔒 Security Features
+## 🐳 Despliegue con Docker
 
-- **IDOR Prevention**: Server Actions meticulously verify session ownership before data mutation.
-- **CSRF Protection**: Handled natively by Next.js Server Actions.
-- **SQL Injection Prevention**: Parameterized queries enforced via Prisma ORM.
+```bash
+# Construir y arrancar todos los servicios
+docker compose up -d --build
+```
 
-## 🚀 Deployment
+El archivo `docker-compose.yml` incluye PostgreSQL y la aplicación Next.js. La base de datos se crea automáticamente con todas las tablas necesarias al arrancar.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new).
+---
 
-When deploying, ensure you configure the following Environment Variables in your Vercel project settings:
-- `DATABASE_URL`
-- `NEXTAUTH_SECRET`
-- `NEXTAUTH_URL`
+## 📁 Estructura del Proyecto
 
-## 📄 License
+```
+src/
+├── app/
+│   ├── [slug]/          # Redirección de enlaces + tracking
+│   ├── admin/           # Panel de administración
+│   ├── dashboard/       # Dashboard principal y campañas
+│   ├── login/           # Página de inicio de sesión
+│   ├── register/        # Página de registro
+│   ├── settings/        # Configuración de perfil y billing
+│   └── api/             # API routes (auth, exports)
+├── components/          # Componentes reutilizables (shadcn/ui)
+├── lib/                 # Utilidades (Prisma client, límites de tier)
+├── types/               # Declaraciones de tipos TypeScript
+├── auth.ts              # Configuración de NextAuth.js
+└── middleware.ts        # Protección de rutas
+```
 
-This project is open-source and available under the [MIT License](LICENSE).
+---
+
+## 🔐 Seguridad
+
+- Contraseñas hasheadas con **bcrypt** (10 rondas de salt)
+- Sesiones JWT con rotación automática
+- Server Actions protegidas con verificación de sesión
+- Panel admin restringido por rol (`ADMIN`)
+- Protección contra IDOR en todas las operaciones de datos
+- Middleware de autenticación en rutas protegidas
+- Inputs validados y sanitizados vía Prisma ORM
+
+---
+
+## 📄 Variables de Entorno
+
+```env
+DATABASE_URL="postgresql://user:pass@localhost:5432/linkshort"
+NEXTAUTH_SECRET="tu-secreto-seguro"
+NEXTAUTH_URL="http://localhost:3000"
+AUTH_TRUST_HOST=true
+```
+
+---
+
+## 📝 Licencia
+
+Este proyecto es de código privado para uso en portfolio.
