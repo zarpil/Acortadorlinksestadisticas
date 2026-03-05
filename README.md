@@ -108,7 +108,7 @@ src/
 ```env
 DATABASE_URL="postgresql://user:pass@localhost:5432/linkshort"
 NEXTAUTH_SECRET="tu-secreto-seguro"
-NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="http://localhost:4675"
 AUTH_TRUST_HOST=true
 ```
 
