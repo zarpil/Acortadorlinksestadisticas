@@ -42,8 +42,8 @@ COPY --from=builder /app/prisma ./prisma
 # Copy the geoip-lite module manually because Next.js standalone dynamic tracing ignores it
 COPY --from=deps /app/node_modules/geoip-lite ./node_modules/geoip-lite
 
-EXPOSE 3000
-ENV PORT=3000
+EXPOSE 4675
+ENV PORT=4675
 
 # Install prisma to run database sync at startup
 RUN npm install -g prisma@6.19.2
