@@ -132,7 +132,7 @@ export default async function CampaignPage(
     const topReferrers = sortMap(referrersMap);
 
     const headersList = await import("next/headers").then(m => m.headers());
-    const host = headersList.get("host") || "localhost:3000";
+    const host = headersList.get("host") || "localhost:4675";
 
     return (
         <div className="flex-1 space-y-6 pb-12">
